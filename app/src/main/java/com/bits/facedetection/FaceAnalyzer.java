@@ -25,6 +25,8 @@ public class FaceAnalyzer implements ImageAnalysis.Analyzer {
 
     private Context mContext;
 
+    FaceDetector detector;
+
     public FaceAnalyzer(Context context) {
         mContext = context;
     }
@@ -39,6 +41,7 @@ public class FaceAnalyzer implements ImageAnalysis.Analyzer {
 
             detectFace(image);
         }
+        imageProxy.close();
     }
 
     private void detectFace(InputImage image) {
@@ -47,11 +50,9 @@ public class FaceAnalyzer implements ImageAnalysis.Analyzer {
                         .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE)
                         .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_ALL)
                         .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)
-                        .setMinFaceSize(1.0f )
-                        .enableTracking()
                         .build();
 
-        FaceDetector detector = FaceDetection.getClient(options);
+        detector = FaceDetection.getClient(options);
         detector.process(image)
                 .addOnSuccessListener(this::drawFace)
                 .addOnFailureListener(
@@ -63,6 +64,12 @@ public class FaceAnalyzer implements ImageAnalysis.Analyzer {
         for (Face face : faces) {
             Rect rect = face.getBoundingBox();
 
+            Log.d("DATA::",
+                    "top: " + rect.top + "\nbottom: " + rect.bottom + "\nleft: " + rect.left
+                            + "\nright: "
+                            + rect.right);
+
         }
     }
+
 }
